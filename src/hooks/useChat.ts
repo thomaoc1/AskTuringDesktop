@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Message } from "../types";
 import { sendAIQuery, sendProjectQuery, processSSEStream } from "../lib/api";
 
-export function useChat(selectedProjectId?: string) {
+export function useChat(selectedProjectId?: string, webSearchEnabled = false) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -55,7 +55,7 @@ export function useChat(selectedProjectId?: string) {
         stream = await sendProjectQuery(selectedProjectId, messageText, {
           model_name: "auto",
           persona: "general",
-          web_search_enabled: false,
+          web_search_enabled: webSearchEnabled,
         });
       } else {
         console.log(
@@ -67,7 +67,7 @@ export function useChat(selectedProjectId?: string) {
           conversation_id: conversationId || undefined,
           model_name: "gpt-4",
           persona: "general",
-          web_search_enabled: false,
+          web_search_enabled: webSearchEnabled,
         });
       }
 

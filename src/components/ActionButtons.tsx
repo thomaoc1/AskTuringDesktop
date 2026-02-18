@@ -17,6 +17,8 @@ interface ActionButtonsProps {
   onProjectDropdownOpen?: () => void;
   onDropdownStateChange?: (isOpen: boolean) => void;
   isExpanded?: boolean;
+  isWebEnabled?: boolean;
+  onWebToggle?: () => void;
 }
 
 export default function ActionButtons({
@@ -31,6 +33,8 @@ export default function ActionButtons({
   onProjectDropdownOpen,
   onDropdownStateChange,
   isExpanded = false,
+  isWebEnabled = false,
+  onWebToggle,
 }: ActionButtonsProps) {
   const { openDropdown, dropdownRef, toggleDropdown, closeDropdown } =
     useDropdown();
@@ -78,7 +82,7 @@ export default function ActionButtons({
         isExpanded={isExpanded}
       />
 
-      <ActionButton icon="🌐" onClick={() => onAction?.("settings")} />
+      <ActionButton icon="🌐" onClick={onWebToggle} active={isWebEnabled} />
       <ActionButton icon="👤" onClick={() => onAction?.("help")} />
     </div>
   );

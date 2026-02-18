@@ -18,6 +18,7 @@ export default function Bubble() {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isWebEnabled, setIsWebEnabled] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState("ai-chat");
   const [selectedProjectName, setSelectedProjectName] = useState("AI Chat");
   const [_, setSelectedModelId] = useState("auto");
@@ -36,7 +37,7 @@ export default function Bubble() {
     conversationId,
     setInputValue,
     handleSendMessage,
-  } = useChat(selectedProjectId);
+  } = useChat(selectedProjectId, isWebEnabled);
 
   const { projects, refetch: refetchProjects } = useProjects();
   const {
@@ -120,7 +121,7 @@ export default function Bubble() {
       )}
 
       <div
-        className={`flex-shrink-0 p-3 space-y-2 ${showMessages ? "border-t border-gray-200" : ""}`}
+        className={`shrink-0 p-3 space-y-2 ${showMessages ? "border-t border-gray-200" : ""}`}
       >
         <ChatInput
           value={inputValue}
@@ -143,6 +144,8 @@ export default function Bubble() {
           onAction={handleAction}
           onDropdownStateChange={setIsDropdownOpen}
           isExpanded={isExpanded}
+          isWebEnabled={isWebEnabled}
+          onWebToggle={() => setIsWebEnabled((prev) => !prev)}
         />
       </div>
     </BubbleContainer>
