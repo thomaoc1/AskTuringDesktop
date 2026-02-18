@@ -19,10 +19,14 @@ export default function Dropdown({
 
   return (
     <div
-      className={`absolute left-0 bg-white rounded-lg shadow-lg
-                  border border-gray-200 py-1 overflow-y-auto z-10
-                  ${isExpanded ? "bottom-full mb-1" : "top-full mt-1"}`}
-      style={{ minWidth, maxHeight }}
+      className={`absolute left-0 rounded-lg py-1 overflow-y-auto z-10 ${isExpanded ? "bottom-full mb-1" : "top-full mt-1"}`}
+      style={{
+        minWidth,
+        maxHeight,
+        backgroundColor: "var(--color-bg)",
+        border: "1px solid var(--color-border)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+      }}
     >
       {children}
     </div>

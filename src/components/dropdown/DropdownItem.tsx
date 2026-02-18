@@ -14,9 +14,23 @@ export default function DropdownItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full ${isIndented ? "pl-6" : "px-3"} pr-3 py-2 text-left text-xs font-[system-ui] text-gray-700
-                 hover:bg-gray-100 border-none bg-transparent cursor-pointer
-                 ${isSelected ? "bg-blue-50 font-semibold" : ""}`}
+      className={`w-full ${isIndented ? "pl-6" : "px-3"} pr-3 py-2 text-left text-xs font-[system-ui] border-none cursor-pointer transition-colors`}
+      style={{
+        backgroundColor: isSelected ? "var(--color-active)" : "transparent",
+        color: isSelected
+          ? "var(--color-primary)"
+          : "var(--color-text-primary)",
+        fontWeight: isSelected ? 600 : 400,
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected)
+          e.currentTarget.style.backgroundColor = "var(--color-hover)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = isSelected
+          ? "var(--color-active)"
+          : "transparent";
+      }}
     >
       {label}
     </button>

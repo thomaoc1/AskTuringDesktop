@@ -121,7 +121,10 @@ export default function Bubble() {
       )}
 
       <div
-        className={`shrink-0 p-3 space-y-2 ${showMessages ? "border-t border-gray-200" : ""}`}
+        className="shrink-0 p-3 space-y-2"
+        style={
+          showMessages ? { borderTop: "1px solid var(--color-border)" } : {}
+        }
       >
         <ChatInput
           value={inputValue}

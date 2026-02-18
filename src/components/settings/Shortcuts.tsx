@@ -34,12 +34,10 @@ export default function Shortcuts() {
   const [recordedKeys, setRecordedKeys] = useState<string[]>([]);
   const [isRecording, setIsRecording] = useState(false);
 
-  // Load shortcuts from localStorage on mount and sync with backend
   useEffect(() => {
     const loadAndSync = async () => {
       const stored = localStorage.getItem(STORAGE_KEY);
       let loadedShortcuts = DEFAULT_SHORTCUTS;
-
       if (stored) {
         try {
           loadedShortcuts = JSON.parse(stored);
@@ -48,58 +46,43 @@ export default function Shortcuts() {
           console.error("Failed to load shortcuts:", error);
         }
       }
-
-      // Sync with backend
       try {
         const shortcutsForBackend = loadedShortcuts.map((s) => ({
           id: s.id,
           keys: s.keys,
         }));
         await invoke("update_shortcuts", { shortcuts: shortcutsForBackend });
-        console.log("Initial shortcuts synced with backend");
       } catch (error) {
         console.error("Failed to sync shortcuts with backend:", error);
       }
     };
-
     loadAndSync();
   }, []);
 
-  // Save shortcuts to localStorage and sync with Rust backend
   const saveShortcuts = useCallback(async (newShortcuts: ShortcutItem[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newShortcuts));
     setShortcuts(newShortcuts);
-
-    // Send to Rust backend to update global shortcuts
     try {
       const shortcutsForBackend = newShortcuts.map((s) => ({
         id: s.id,
         keys: s.keys,
       }));
       await invoke("update_shortcuts", { shortcuts: shortcutsForBackend });
-      console.log("Shortcuts updated in backend");
     } catch (error) {
       console.error("Failed to update shortcuts in backend:", error);
     }
   }, []);
 
-  // Handle keyboard events during recording
   useEffect(() => {
     if (!isRecording) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
       e.stopPropagation();
-
       const keys: string[] = [];
-
-      // Modifiers
       if (e.metaKey || e.key === "Meta") keys.push("Cmd");
       if (e.ctrlKey || e.key === "Control") keys.push("Ctrl");
       if (e.altKey || e.key === "Alt") keys.push("Alt");
       if (e.shiftKey || e.key === "Shift") keys.push("Shift");
-
-      // Regular key
       const key = e.key.toUpperCase();
       if (
         key !== "META" &&
@@ -110,13 +93,8 @@ export default function Shortcuts() {
       ) {
         keys.push(key);
       }
-
-      // Only update if we have at least one modifier and one regular key
-      if (keys.length >= 2) {
-        setRecordedKeys(keys);
-      }
+      if (keys.length >= 2) setRecordedKeys(keys);
     };
-
     window.addEventListener("keydown", handleKeyDown, true);
     return () => window.removeEventListener("keydown", handleKeyDown, true);
   }, [isRecording]);
@@ -129,10 +107,11 @@ export default function Shortcuts() {
 
   const saveRecording = () => {
     if (editingId && recordedKeys.length >= 2) {
-      const newShortcuts = shortcuts.map((s) =>
-        s.id === editingId ? { ...s, keys: recordedKeys } : s,
+      saveShortcuts(
+        shortcuts.map((s) =>
+          s.id === editingId ? { ...s, keys: recordedKeys } : s,
+        ),
       );
-      saveShortcuts(newShortcuts);
     }
     cancelRecording();
   };
@@ -144,23 +123,24 @@ export default function Shortcuts() {
   };
 
   const resetShortcut = (id: string) => {
-    const defaultShortcut = DEFAULT_SHORTCUTS.find((s) => s.id === id);
-    if (defaultShortcut) {
-      const newShortcuts = shortcuts.map((s) =>
-        s.id === id ? { ...s, keys: defaultShortcut.keys } : s,
+    const def = DEFAULT_SHORTCUTS.find((s) => s.id === id);
+    if (def)
+      saveShortcuts(
+        shortcuts.map((s) => (s.id === id ? { ...s, keys: def.keys } : s)),
       );
-      saveShortcuts(newShortcuts);
-    }
-  };
-
-  const resetAllShortcuts = () => {
-    saveShortcuts(DEFAULT_SHORTCUTS);
   };
 
   const categories = Array.from(new Set(shortcuts.map((s) => s.category)));
 
   const KeyBadge = ({ keyName }: { keyName: string }) => (
-    <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded">
+    <kbd
+      className="px-2 py-1 text-xs font-semibold rounded"
+      style={{
+        color: "var(--color-text-primary)",
+        backgroundColor: "var(--color-bg-tertiary)",
+        border: "1px solid var(--color-border)",
+      }}
+    >
       {keyName}
     </kbd>
   );
@@ -169,27 +149,51 @@ export default function Shortcuts() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+          <h2
+            className="text-2xl font-semibold mb-2"
+            style={{ color: "var(--color-text-primary)" }}
+          >
             Shortcuts
           </h2>
-          <p className="text-gray-500">
+          <p style={{ color: "var(--color-text-secondary)" }}>
             Customize keyboard shortcuts to work faster
           </p>
         </div>
         <button
-          onClick={resetAllShortcuts}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          onClick={() => saveShortcuts(DEFAULT_SHORTCUTS)}
+          className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+          style={{
+            color: "var(--color-text-secondary)",
+            backgroundColor: "var(--color-bg)",
+            border: "1px solid var(--color-border)",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-hover)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-bg)")
+          }
         >
           Reset All
         </button>
       </div>
 
       {isRecording && (
-        <div className="bg-indigo-50 border-2 border-indigo-500 rounded-xl p-6">
+        <div
+          className="rounded-xl p-6"
+          style={{
+            backgroundColor: "var(--color-primary-light)",
+            border: "2px solid var(--color-primary)",
+          }}
+        >
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-indigo-100">
+            <div
+              className="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-full"
+              style={{ backgroundColor: "var(--color-active)" }}
+            >
               <svg
-                className="w-6 h-6 text-indigo-600 animate-pulse"
+                className="w-6 h-6 animate-pulse"
+                style={{ color: "var(--color-primary)" }}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -200,21 +204,37 @@ export default function Shortcuts() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3
+              className="text-lg font-semibold mb-2"
+              style={{ color: "var(--color-text-primary)" }}
+            >
               Recording Shortcut
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p
+              className="text-sm mb-4"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
               Press your desired key combination
             </p>
             {recordedKeys.length > 0 && (
               <div className="flex items-center justify-center gap-1 mb-4">
                 {recordedKeys.map((key, index) => (
                   <div key={index} className="flex items-center gap-1">
-                    <kbd className="px-3 py-2 text-sm font-semibold text-indigo-900 bg-white border-2 border-indigo-300 rounded-lg shadow-sm">
+                    <kbd
+                      className="px-3 py-2 text-sm font-semibold rounded-lg shadow-sm"
+                      style={{
+                        color: "var(--color-primary)",
+                        backgroundColor: "var(--color-bg)",
+                        border: "2px solid var(--color-primary)",
+                      }}
+                    >
                       {key}
                     </kbd>
                     {index < recordedKeys.length - 1 && (
-                      <span className="text-indigo-600 text-sm font-bold">
+                      <span
+                        className="text-sm font-bold"
+                        style={{ color: "var(--color-primary)" }}
+                      >
                         +
                       </span>
                     )}
@@ -226,17 +246,35 @@ export default function Shortcuts() {
               <button
                 onClick={saveRecording}
                 disabled={recordedKeys.length < 2}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  recordedKeys.length >= 2
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+                style={{
+                  backgroundColor:
+                    recordedKeys.length >= 2
+                      ? "var(--color-primary)"
+                      : "var(--color-bg-tertiary)",
+                  color:
+                    recordedKeys.length >= 2
+                      ? "var(--color-text-inverted)"
+                      : "var(--color-text-muted)",
+                  cursor: recordedKeys.length < 2 ? "not-allowed" : "pointer",
+                }}
               >
                 Save
               </button>
               <button
                 onClick={cancelRecording}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+                style={{
+                  color: "var(--color-text-secondary)",
+                  backgroundColor: "var(--color-bg)",
+                  border: "1px solid var(--color-border)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "var(--color-hover)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "var(--color-bg)")
+                }
               >
                 Cancel
               </button>
@@ -247,8 +285,15 @@ export default function Shortcuts() {
 
       <div className="space-y-6">
         {categories.map((category) => (
-          <div key={category} className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div
+            key={category}
+            className="rounded-xl shadow-sm p-6"
+            style={{ backgroundColor: "var(--color-bg)" }}
+          >
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--color-text-primary)" }}
+            >
               {category}
             </h3>
             <div className="space-y-4">
@@ -265,15 +310,25 @@ export default function Shortcuts() {
                   return (
                     <div
                       key={shortcut.id}
-                      className={`flex items-center justify-between py-3 border-b border-gray-100 last:border-0 ${
-                        isEditing ? "bg-indigo-50 -mx-3 px-3 rounded-lg" : ""
-                      }`}
+                      className={`flex items-center justify-between py-3 last:border-0 ${isEditing ? "-mx-3 px-3 rounded-lg" : ""}`}
+                      style={{
+                        borderBottom: "1px solid var(--color-border)",
+                        backgroundColor: isEditing
+                          ? "var(--color-primary-light)"
+                          : "transparent",
+                      }}
                     >
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p
+                          className="text-sm font-medium"
+                          style={{ color: "var(--color-text-primary)" }}
+                        >
                           {shortcut.name}
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p
+                          className="text-sm mt-1"
+                          style={{ color: "var(--color-text-secondary)" }}
+                        >
                           {shortcut.description}
                         </p>
                       </div>
@@ -286,7 +341,12 @@ export default function Shortcuts() {
                             >
                               <KeyBadge keyName={key} />
                               {index < shortcut.keys.length - 1 && (
-                                <span className="text-gray-400 text-xs">+</span>
+                                <span
+                                  className="text-xs"
+                                  style={{ color: "var(--color-text-muted)" }}
+                                >
+                                  +
+                                </span>
                               )}
                             </div>
                           ))}
@@ -295,7 +355,19 @@ export default function Shortcuts() {
                           <button
                             onClick={() => startRecording(shortcut.id)}
                             disabled={isRecording}
-                            className="p-2 text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="p-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{
+                              color: "var(--color-primary)",
+                              backgroundColor: "var(--color-primary-light)",
+                            }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "var(--color-active)")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "var(--color-primary-light)")
+                            }
                             title="Edit shortcut"
                           >
                             <svg
@@ -316,7 +388,19 @@ export default function Shortcuts() {
                             <button
                               onClick={() => resetShortcut(shortcut.id)}
                               disabled={isRecording}
-                              className="p-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              style={{
+                                color: "var(--color-text-secondary)",
+                                backgroundColor: "var(--color-bg-tertiary)",
+                              }}
+                              onMouseEnter={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "var(--color-hover-secondary)")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "var(--color-bg-tertiary)")
+                              }
                               title="Reset to default"
                             >
                               <svg
@@ -344,10 +428,17 @@ export default function Shortcuts() {
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div
+        className="rounded-xl p-4"
+        style={{
+          backgroundColor: "var(--color-info-bg)",
+          border: "1px solid var(--color-info-border)",
+        }}
+      >
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
+            className="w-5 h-5 mt-0.5 flex-shrink-0"
+            style={{ color: "var(--color-info-body)" }}
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -358,10 +449,16 @@ export default function Shortcuts() {
             />
           </svg>
           <div>
-            <p className="text-sm font-medium text-blue-900">
+            <p
+              className="text-sm font-medium"
+              style={{ color: "var(--color-info-text)" }}
+            >
               Note about shortcuts
             </p>
-            <p className="text-sm text-blue-700 mt-1">
+            <p
+              className="text-sm mt-1"
+              style={{ color: "var(--color-info-body)" }}
+            >
               Changes to shortcuts take effect immediately. Make sure to use
               modifier keys (Cmd/Ctrl/Alt/Shift) combined with a letter or
               number.

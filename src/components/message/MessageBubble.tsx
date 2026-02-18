@@ -23,10 +23,16 @@ export default function MessageBubble({
 
   return (
     <div
-      className={`
-        ${isUser ? "self-end bg-[#667eea] text-white" : "self-start bg-gray-100 text-gray-800"}
-        max-w-[80%] px-3.5 py-2.5 rounded-xl font-[system-ui] text-sm leading-relaxed break-words
-      `}
+      className="max-w-[80%] px-3.5 py-2.5 rounded-xl font-[system-ui] text-sm leading-relaxed break-words"
+      style={{
+        alignSelf: isUser ? "flex-end" : "flex-start",
+        backgroundColor: isUser
+          ? "var(--color-msg-user-bg)"
+          : "var(--color-msg-ai-bg)",
+        color: isUser
+          ? "var(--color-msg-user-text)"
+          : "var(--color-msg-ai-text)",
+      }}
     >
       {processedContent ? (
         <MarkdownContent

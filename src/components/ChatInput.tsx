@@ -18,10 +18,8 @@ export default function ChatInput({
   const windowManager = useWindowManager();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Focus input when bubble window becomes visible
   useEffect(() => {
     const unlistenShowing = listen("window-showing", () => {
-      // Small delay to ensure window is fully shown
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
@@ -42,7 +40,6 @@ export default function ChatInput({
   };
 
   const handleSettingsClick = () => {
-    // Clean, consistent API - switch from bubble to main window
     windowManager.switchWindows("bubble", "main");
   };
 
@@ -64,12 +61,21 @@ export default function ChatInput({
         placeholder="Type a message..."
         disabled={isStreaming}
         autoFocus
-        className={`
-          w-full px-4 py-3 text-sm font-[system-ui] border-2 border-slate-200 rounded-xl
-          outline-none box-border transition-all duration-200
-          ${isStreaming ? "bg-gray-50 cursor-not-allowed" : "bg-white"}
-          focus:border-[#667eea]
-        `}
+        className="w-full px-4 py-3 text-sm font-[system-ui] rounded-xl outline-none box-border transition-all duration-200 border-2"
+        style={{
+          backgroundColor: isStreaming
+            ? "var(--color-bg-secondary)"
+            : "var(--color-bg)",
+          borderColor: "var(--color-border-input)",
+          color: "var(--color-text-primary)",
+          cursor: isStreaming ? "not-allowed" : "text",
+        }}
+        onFocus={(e) =>
+          (e.currentTarget.style.borderColor = "var(--color-primary)")
+        }
+        onBlur={(e) =>
+          (e.currentTarget.style.borderColor = "var(--color-border-input)")
+        }
       />
     </div>
   );

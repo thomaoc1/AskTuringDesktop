@@ -5,10 +5,19 @@ export default function Account() {
 
   if (isAuthenticating) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-8">
+      <div
+        className="rounded-xl shadow-sm p-8"
+        style={{ backgroundColor: "var(--color-bg)" }}
+      >
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div
+            className="h-4 rounded w-1/4"
+            style={{ backgroundColor: "var(--color-bg-tertiary)" }}
+          />
+          <div
+            className="h-4 rounded w-1/2"
+            style={{ backgroundColor: "var(--color-bg-tertiary)" }}
+          />
         </div>
       </div>
     );
@@ -16,8 +25,13 @@ export default function Account() {
 
   if (!user) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-8">
-        <p className="text-gray-500">No user information available.</p>
+      <div
+        className="rounded-xl shadow-sm p-8"
+        style={{ backgroundColor: "var(--color-bg)" }}
+      >
+        <p style={{ color: "var(--color-text-secondary)" }}>
+          No user information available.
+        </p>
       </div>
     );
   }
@@ -25,20 +39,52 @@ export default function Account() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Account</h2>
-        <p className="text-gray-500">View your account information</p>
+        <h2
+          className="text-2xl font-semibold mb-2"
+          style={{ color: "var(--color-text-primary)" }}
+        >
+          Account
+        </h2>
+        <p style={{ color: "var(--color-text-secondary)" }}>
+          View your account information
+        </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm divide-y divide-gray-200">
+      <div
+        className="rounded-xl shadow-sm"
+        style={{
+          backgroundColor: "var(--color-bg)",
+          border: "1px solid var(--color-border)",
+        }}
+      >
         {/* Email */}
-        <div className="p-6">
+        <div
+          className="p-6"
+          style={{ borderBottom: "1px solid var(--color-border)" }}
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Email</p>
-              <p className="text-base text-gray-900">{user.email}</p>
+              <p
+                className="text-sm font-medium mb-1"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                Email
+              </p>
+              <p
+                className="text-base"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                {user.email}
+              </p>
             </div>
             {user.email_confirmed_at && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: "var(--color-success-bg)",
+                  color: "var(--color-success-text)",
+                }}
+              >
                 Verified
               </span>
             )}
@@ -46,17 +92,43 @@ export default function Account() {
         </div>
 
         {/* User ID */}
-        <div className="p-6">
-          <p className="text-sm font-medium text-gray-500 mb-1">User ID</p>
-          <p className="text-gray-900 font-mono text-sm">{user.id}</p>
+        <div
+          className="p-6"
+          style={{ borderBottom: "1px solid var(--color-border)" }}
+        >
+          <p
+            className="text-sm font-medium mb-1"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
+            User ID
+          </p>
+          <p
+            className="font-mono text-sm"
+            style={{ color: "var(--color-text-primary)" }}
+          >
+            {user.id}
+          </p>
         </div>
 
         {/* Account Created */}
-        <div className="p-6">
-          <p className="text-sm font-medium text-gray-500 mb-1">
+        <div
+          className="p-6"
+          style={
+            user.last_sign_in_at || user.app_metadata?.provider
+              ? { borderBottom: "1px solid var(--color-border)" }
+              : {}
+          }
+        >
+          <p
+            className="text-sm font-medium mb-1"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
             Account Created
           </p>
-          <p className="text-base text-gray-900">
+          <p
+            className="text-base"
+            style={{ color: "var(--color-text-primary)" }}
+          >
             {new Date(user.created_at).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -67,11 +139,24 @@ export default function Account() {
 
         {/* Last Sign In */}
         {user.last_sign_in_at && (
-          <div className="p-6">
-            <p className="text-sm font-medium text-gray-500 mb-1">
+          <div
+            className="p-6"
+            style={
+              user.app_metadata?.provider
+                ? { borderBottom: "1px solid var(--color-border)" }
+                : {}
+            }
+          >
+            <p
+              className="text-sm font-medium mb-1"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
               Last Sign In
             </p>
-            <p className="text-base text-gray-900">
+            <p
+              className="text-base"
+              style={{ color: "var(--color-text-primary)" }}
+            >
               {new Date(user.last_sign_in_at).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -86,10 +171,16 @@ export default function Account() {
         {/* Provider */}
         {user.app_metadata?.provider && (
           <div className="p-6">
-            <p className="text-sm font-medium text-gray-500 mb-1">
+            <p
+              className="text-sm font-medium mb-1"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
               Sign-in Method
             </p>
-            <p className="text-base text-gray-900 capitalize">
+            <p
+              className="text-base capitalize"
+              style={{ color: "var(--color-text-primary)" }}
+            >
               {user.app_metadata.provider}
             </p>
           </div>

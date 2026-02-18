@@ -16,10 +16,18 @@ export default function DropdownButton({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200
-                 rounded-full text-xs font-[system-ui] text-gray-700
-                 transition-colors duration-150 cursor-pointer border-none"
-      style={{ maxWidth }}
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-[system-ui] transition-colors duration-150 cursor-pointer border-none"
+      style={{
+        backgroundColor: "var(--color-bg-tertiary)",
+        color: "var(--color-text-secondary)",
+        maxWidth,
+      }}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.backgroundColor = "var(--color-hover-secondary)")
+      }
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.backgroundColor = "var(--color-bg-tertiary)")
+      }
     >
       <span>{icon}</span>
       <span className="truncate">{label}</span>

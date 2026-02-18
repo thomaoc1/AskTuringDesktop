@@ -5,11 +5,20 @@ interface DropdownSectionProps {
   children: ReactNode;
 }
 
-export default function DropdownSection({ title, children }: DropdownSectionProps) {
+export default function DropdownSection({
+  title,
+  children,
+}: DropdownSectionProps) {
   return (
     <>
-      <div className="my-1 border-t border-gray-200" />
-      <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
+      <div
+        className="my-1"
+        style={{ borderTop: "1px solid var(--color-border)" }}
+      />
+      <div
+        className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide"
+        style={{ color: "var(--color-text-muted)" }}
+      >
         {title}
       </div>
       {children}

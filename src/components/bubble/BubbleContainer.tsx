@@ -30,7 +30,13 @@ export default function BubbleContainer({
             "height 180ms ease-in-out, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease-out",
         }}
       >
-        <div className="h-full flex flex-col bg-white rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.15)] min-h-0">
+        <div
+          className="h-full flex flex-col rounded-2xl min-h-0"
+          style={{
+            backgroundColor: "var(--color-bg)",
+            boxShadow: "var(--shadow-bubble)",
+          }}
+        >
           {children}
         </div>
       </div>
