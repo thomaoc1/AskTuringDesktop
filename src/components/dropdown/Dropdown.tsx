@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import "./dropdown.css";
 
 interface DropdownProps {
   isOpen: boolean;
@@ -19,14 +20,8 @@ export default function Dropdown({
 
   return (
     <div
-      className={`absolute left-0 rounded-lg py-1 overflow-y-auto z-10 ${isExpanded ? "bottom-full mb-1" : "top-full mt-1"}`}
-      style={{
-        minWidth,
-        maxHeight,
-        backgroundColor: "var(--color-bg)",
-        border: "1px solid var(--color-border)",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-      }}
+      className={`dropdown-panel ${isExpanded ? "dropdown-panel--above" : "dropdown-panel--below"}`}
+      style={{ minWidth, maxHeight }}
     >
       {children}
     </div>

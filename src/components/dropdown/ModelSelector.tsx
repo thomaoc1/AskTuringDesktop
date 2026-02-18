@@ -1,6 +1,7 @@
 import Dropdown from "./Dropdown";
 import DropdownButton from "./DropdownButton";
 import DropdownItem from "./DropdownItem";
+import "./dropdown.css";
 
 interface ModelOption {
   id: string;
@@ -37,7 +38,7 @@ export default function ModelSelector({
   isExpanded = false,
 }: ModelSelectorProps) {
   return (
-    <div className="relative">
+    <div className="dropdown-wrapper">
       <DropdownButton
         icon="🤖"
         label={selectedModel}

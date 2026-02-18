@@ -1,23 +1,15 @@
 import { useAuth } from "../../contexts/AuthContext";
+import "./settings.css";
 
 export default function Account() {
   const { user, isAuthenticating } = useAuth();
 
   if (isAuthenticating) {
     return (
-      <div
-        className="rounded-xl shadow-sm p-8"
-        style={{ backgroundColor: "var(--color-bg)" }}
-      >
-        <div className="animate-pulse space-y-4">
-          <div
-            className="h-4 rounded w-1/4"
-            style={{ backgroundColor: "var(--color-bg-tertiary)" }}
-          />
-          <div
-            className="h-4 rounded w-1/2"
-            style={{ backgroundColor: "var(--color-bg-tertiary)" }}
-          />
+      <div className="settings-card" style={{ padding: "2rem" }}>
+        <div className="account-skeleton">
+          <div className="account-skeleton-line" style={{ width: "25%" }} />
+          <div className="account-skeleton-line" style={{ width: "50%" }} />
         </div>
       </div>
     );
@@ -25,110 +17,49 @@ export default function Account() {
 
   if (!user) {
     return (
-      <div
-        className="rounded-xl shadow-sm p-8"
-        style={{ backgroundColor: "var(--color-bg)" }}
-      >
-        <p style={{ color: "var(--color-text-secondary)" }}>
-          No user information available.
-        </p>
+      <div className="settings-card" style={{ padding: "2rem" }}>
+        <p className="settings-page-subtitle">No user information available.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       <div>
-        <h2
-          className="text-2xl font-semibold mb-2"
-          style={{ color: "var(--color-text-primary)" }}
-        >
-          Account
-        </h2>
-        <p style={{ color: "var(--color-text-secondary)" }}>
-          View your account information
-        </p>
+        <h2 className="settings-page-title">Account</h2>
+        <p className="settings-page-subtitle">View your account information</p>
       </div>
 
-      <div
-        className="rounded-xl shadow-sm"
-        style={{
-          backgroundColor: "var(--color-bg)",
-          border: "1px solid var(--color-border)",
-        }}
-      >
+      <div className="settings-card">
         {/* Email */}
-        <div
-          className="p-6"
-          style={{ borderBottom: "1px solid var(--color-border)" }}
-        >
-          <div className="flex items-center justify-between">
+        <div className="settings-card-row">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <div>
-              <p
-                className="text-sm font-medium mb-1"
-                style={{ color: "var(--color-text-secondary)" }}
-              >
-                Email
-              </p>
-              <p
-                className="text-base"
-                style={{ color: "var(--color-text-primary)" }}
-              >
-                {user.email}
-              </p>
+              <p className="settings-label">Email</p>
+              <p className="settings-value">{user.email}</p>
             </div>
             {user.email_confirmed_at && (
-              <span
-                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                style={{
-                  backgroundColor: "var(--color-success-bg)",
-                  color: "var(--color-success-text)",
-                }}
-              >
-                Verified
-              </span>
+              <span className="account-badge">Verified</span>
             )}
           </div>
         </div>
 
         {/* User ID */}
-        <div
-          className="p-6"
-          style={{ borderBottom: "1px solid var(--color-border)" }}
-        >
-          <p
-            className="text-sm font-medium mb-1"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            User ID
-          </p>
-          <p
-            className="font-mono text-sm"
-            style={{ color: "var(--color-text-primary)" }}
-          >
-            {user.id}
-          </p>
+        <div className="settings-card-row">
+          <p className="settings-label">User ID</p>
+          <p className="account-mono">{user.id}</p>
         </div>
 
         {/* Account Created */}
-        <div
-          className="p-6"
-          style={
-            user.last_sign_in_at || user.app_metadata?.provider
-              ? { borderBottom: "1px solid var(--color-border)" }
-              : {}
-          }
-        >
-          <p
-            className="text-sm font-medium mb-1"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            Account Created
-          </p>
-          <p
-            className="text-base"
-            style={{ color: "var(--color-text-primary)" }}
-          >
+        <div className="settings-card-row">
+          <p className="settings-label">Account Created</p>
+          <p className="settings-value">
             {new Date(user.created_at).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -139,24 +70,9 @@ export default function Account() {
 
         {/* Last Sign In */}
         {user.last_sign_in_at && (
-          <div
-            className="p-6"
-            style={
-              user.app_metadata?.provider
-                ? { borderBottom: "1px solid var(--color-border)" }
-                : {}
-            }
-          >
-            <p
-              className="text-sm font-medium mb-1"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              Last Sign In
-            </p>
-            <p
-              className="text-base"
-              style={{ color: "var(--color-text-primary)" }}
-            >
+          <div className="settings-card-row">
+            <p className="settings-label">Last Sign In</p>
+            <p className="settings-value">
               {new Date(user.last_sign_in_at).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -170,16 +86,11 @@ export default function Account() {
 
         {/* Provider */}
         {user.app_metadata?.provider && (
-          <div className="p-6">
+          <div className="settings-card-row">
+            <p className="settings-label">Sign-in Method</p>
             <p
-              className="text-sm font-medium mb-1"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              Sign-in Method
-            </p>
-            <p
-              className="text-base capitalize"
-              style={{ color: "var(--color-text-primary)" }}
+              className="settings-value"
+              style={{ textTransform: "capitalize" }}
             >
               {user.app_metadata.provider}
             </p>

@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import "./message.css";
 
 interface WebReference {
   index: number;
@@ -28,19 +29,13 @@ export default function MarkdownContent({
           const match = /language-(\w+)/.exec(className || "");
           const inline = !className;
 
-          // Check if inline code contains only currency-like patterns
           if (inline) {
             const text = String(children);
-            // Match currency patterns like $50, $50 billion, €100, £200, etc.
             const isCurrency =
               /^[$€£¥₹]\s*\d+[\d,.]*(k|m|b|bn|million|billion|trillion)?(\s+\w+)?$/i.test(
                 text.trim(),
               );
-
-            // If it's just currency, render as plain text instead of code
-            if (isCurrency) {
-              return <>{children}</>;
-            }
+            if (isCurrency) return <>{children}</>;
           }
 
           return !inline && match ? (
@@ -59,7 +54,7 @@ export default function MarkdownContent({
             </SyntaxHighlighter>
           ) : (
             <code
-              className={`${isUser ? "bg-[#5568d3]" : "bg-gray-200"} px-1.5 py-0.5 rounded text-xs`}
+              className={`md-code-inline ${isUser ? "md-code-inline--user" : "md-code-inline--ai"}`}
               {...props}
             >
               {children}
@@ -67,79 +62,69 @@ export default function MarkdownContent({
           );
         },
         p({ children }) {
-          return <p className="mb-2 last:mb-0">{children}</p>;
+          return <p className="md">{children}</p>;
         },
         ul({ children }) {
-          return (
-            <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
-          );
+          return <ul className="md">{children}</ul>;
         },
         ol({ children }) {
-          return (
-            <ol className="list-decimal list-inside mb-2 space-y-1">
-              {children}
-            </ol>
-          );
+          return <ol className="md">{children}</ol>;
         },
         li({ children }) {
-          return <li className="ml-2">{children}</li>;
+          return <li className="md">{children}</li>;
+        },
+        strong({ children }) {
+          return <strong className="md">{children}</strong>;
+        },
+        em({ children }) {
+          return <em className="md">{children}</em>;
+        },
+        h1({ children }) {
+          return <h1 className="md">{children}</h1>;
+        },
+        h2({ children }) {
+          return <h2 className="md">{children}</h2>;
+        },
+        h3({ children }) {
+          return <h3 className="md">{children}</h3>;
+        },
+        blockquote({ children }) {
+          return (
+            <blockquote
+              className={`md blockquote ${isUser ? "md-blockquote--user" : "md-blockquote--ai"}`}
+            >
+              {children}
+            </blockquote>
+          );
         },
         a({ href, children }) {
-          // Check if this is a numbered citation [1], [2], etc.
           const isCitation = /^\d+$/.test(String(children));
-
           if (isCitation) {
-            const citationNum = parseInt(String(children));
-            const ref = references.find((r) => r.index === citationNum);
-
+            const ref = references.find(
+              (r) => r.index === parseInt(String(children)),
+            );
             return (
               <a
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${isUser ? "text-white" : "text-blue-600"} hover:opacity-80 font-medium`}
+                className={`md-link ${isUser ? "md-link--user" : "md-link--ai"}`}
                 title={ref?.source}
               >
                 [{children}]
               </a>
             );
           }
-
-          // Regular link
           return (
             <a
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`underline ${isUser ? "text-white" : "text-blue-600"} hover:opacity-80`}
+              className={`md md-link ${isUser ? "md-link--user" : "md-link--ai"}`}
             >
               {children}
             </a>
           );
-        },
-        strong({ children }) {
-          return <strong className="font-semibold">{children}</strong>;
-        },
-        em({ children }) {
-          return <em className="italic">{children}</em>;
-        },
-        blockquote({ children }) {
-          return (
-            <blockquote
-              className={`border-l-4 ${isUser ? "border-white/50" : "border-gray-400"} pl-3 my-2 italic`}
-            >
-              {children}
-            </blockquote>
-          );
-        },
-        h1({ children }) {
-          return <h1 className="text-lg font-bold mb-2 mt-1">{children}</h1>;
-        },
-        h2({ children }) {
-          return <h2 className="text-base font-bold mb-2 mt-1">{children}</h2>;
-        },
-        h3({ children }) {
-          return <h3 className="text-sm font-bold mb-1 mt-1">{children}</h3>;
         },
       }}
     >

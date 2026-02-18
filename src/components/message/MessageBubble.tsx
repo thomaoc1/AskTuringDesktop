@@ -2,6 +2,7 @@ import { Message } from "../../types";
 import { useWebReferences } from "../../hooks/useWebReferences";
 import LoadingDots from "./LoadingDots";
 import MarkdownContent from "./MarkdownContent";
+import "./message.css";
 
 interface MessageBubbleProps {
   message: Message;
@@ -23,16 +24,7 @@ export default function MessageBubble({
 
   return (
     <div
-      className="max-w-[80%] px-3.5 py-2.5 rounded-xl font-[system-ui] text-sm leading-relaxed break-words"
-      style={{
-        alignSelf: isUser ? "flex-end" : "flex-start",
-        backgroundColor: isUser
-          ? "var(--color-msg-user-bg)"
-          : "var(--color-msg-ai-bg)",
-        color: isUser
-          ? "var(--color-msg-user-text)"
-          : "var(--color-msg-ai-text)",
-      }}
+      className={`message-bubble ${isUser ? "message-bubble--user" : "message-bubble--assistant"}`}
     >
       {processedContent ? (
         <MarkdownContent

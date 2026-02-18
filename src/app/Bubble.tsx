@@ -6,8 +6,8 @@ import { useCollections } from "../hooks/useCollections";
 import { useAuthRouter } from "../hooks/useAuthRouter";
 import { useBubbleState } from "../hooks/useBubbleState";
 import MessageList from "../components/message/MessageList";
-import ChatInput from "../components/ChatInput";
-import ActionButtons from "../components/ActionButtons";
+import ChatInput from "../components/bubble/ChatInput";
+import ActionButtons from "../components/bubble/ActionButtons";
 import BubbleHeader from "../components/bubble/BubbleHeader";
 import BubbleContainer from "../components/bubble/BubbleContainer";
 
@@ -121,10 +121,7 @@ export default function Bubble() {
       )}
 
       <div
-        className="shrink-0 p-3 space-y-2"
-        style={
-          showMessages ? { borderTop: "1px solid var(--color-border)" } : {}
-        }
+        className={`bubble-bottom${showMessages ? " bubble-bottom--with-border" : ""}`}
       >
         <ChatInput
           value={inputValue}

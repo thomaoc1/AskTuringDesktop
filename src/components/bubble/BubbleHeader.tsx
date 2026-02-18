@@ -1,3 +1,5 @@
+import "./bubble.css";
+
 interface BubbleHeaderProps {
   onNavigate: () => void;
   onPin: () => void;
@@ -5,19 +7,9 @@ interface BubbleHeaderProps {
 
 export default function BubbleHeader({ onNavigate, onPin }: BubbleHeaderProps) {
   return (
-    <div
-      className="flex items-center justify-end gap-2 px-4 py-2 flex-shrink-0"
-      style={{ borderBottom: "1px solid var(--color-border)" }}
-    >
+    <div className="bubble-header">
       <button
-        className="p-1.5 rounded-md transition-colors"
-        style={{ color: "var(--color-text-secondary)" }}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.backgroundColor = "var(--color-hover)")
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.backgroundColor = "transparent")
-        }
+        className="bubble-header-btn"
         onClick={onNavigate}
         title="Go to conversation"
       >
@@ -37,14 +29,7 @@ export default function BubbleHeader({ onNavigate, onPin }: BubbleHeaderProps) {
         </svg>
       </button>
       <button
-        className="p-1.5 rounded-md transition-colors"
-        style={{ color: "var(--color-text-secondary)" }}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.backgroundColor = "var(--color-hover)")
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.backgroundColor = "transparent")
-        }
+        className="bubble-header-btn"
         onClick={onPin}
         title="Pin conversation"
       >

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import "./dropdown.css";
 
 interface DropdownSectionProps {
   title: string;
@@ -11,16 +12,8 @@ export default function DropdownSection({
 }: DropdownSectionProps) {
   return (
     <>
-      <div
-        className="my-1"
-        style={{ borderTop: "1px solid var(--color-border)" }}
-      />
-      <div
-        className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide"
-        style={{ color: "var(--color-text-muted)" }}
-      >
-        {title}
-      </div>
+      <hr className="dropdown-section-divider" />
+      <div className="dropdown-section-title">{title}</div>
       {children}
     </>
   );

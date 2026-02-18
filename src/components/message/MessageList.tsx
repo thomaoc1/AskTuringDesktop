@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { Message } from "../../types";
 import MessageBubble from "./MessageBubble";
+import "./message.css";
 
 interface MessageListProps {
   messages: Message[];
@@ -22,7 +23,7 @@ export default function MessageList({
   }, [messages, isStreaming]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-4 flex flex-col gap-3">
+    <div className="message-list">
       {messages.map((message: Message) => (
         <MessageBubble
           key={message.id}

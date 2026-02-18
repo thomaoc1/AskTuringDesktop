@@ -3,6 +3,7 @@ import Dropdown from "./Dropdown";
 import DropdownButton from "./DropdownButton";
 import DropdownItem from "./DropdownItem";
 import DropdownSection from "./DropdownSection";
+import "./dropdown.css";
 
 interface ProjectSelectorProps {
   projects: Project[];
@@ -26,7 +27,7 @@ export default function ProjectSelector({
   isExpanded = false,
 }: ProjectSelectorProps) {
   return (
-    <div className="relative">
+    <div className="dropdown-wrapper">
       <DropdownButton
         icon="📁"
         label={selectedProject}
@@ -51,7 +52,7 @@ export default function ProjectSelector({
                   isSelected={selectedProject === project.name}
                   isIndented
                 />
-              ) : null
+              ) : null,
             )}
           </DropdownSection>
         )}
